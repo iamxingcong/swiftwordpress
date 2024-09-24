@@ -1,7 +1,9 @@
 import SwiftUI
 
+import UIKit
 
-// 1. Define the data model for a WordPress post
+
+
 struct Post: Identifiable, Codable {
     let id: Int
     let title: RenderedTitle
@@ -16,6 +18,35 @@ struct Post: Identifiable, Codable {
     }
 }
  
+
+struct HTMLTextView: UIViewRepresentable {
+    let htmlContent: String
+    
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        return textView
+    }
+    
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        guard let data = htmlContent.data(using: .utf8) else { return }
+        
+        
+        let attributedOptions: [NSAttributedString.DocumentReadingOptionKey: Any] = [
+            .documentType: NSAttributedString.DocumentType.html,
+            .characterEncoding: String.Encoding.utf8.rawValue
+        ]
+        
+        if let attributedString = try? NSAttributedString(data: data, options: attributedOptions, documentAttributes: nil) {
+            uiView.attributedText = attributedString
+        }
+    }
+}
+
+
+
 struct ContentView: View {
 
     @State var posts: [Post] = []
@@ -26,8 +57,11 @@ struct ContentView: View {
                 VStack(alignment: .leading) {
                     Text(model.title.rendered)
                         .font(.headline)
-                    Text(model.content.rendered)
-                        .font(.subheadline)
+                    //   Text(model.content.rendered)
+                    //    .font(.subheadline)
+                     
+                    HTMLTextView(htmlContent: model.content.rendered)
+                                
                        
                 }
             }
