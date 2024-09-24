@@ -50,7 +50,7 @@ extension ContentView{
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data {
                 do {
-                    // 4. Decode the JSON response
+                   
                     let decodedPosts = try JSONDecoder().decode([Post].self, from: data)
                     DispatchQueue.main.async {
                         self.posts = decodedPosts
